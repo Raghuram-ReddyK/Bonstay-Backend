@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, CallbackWithoutResultAndOptionalError } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
@@ -74,21 +74,7 @@ const userSchema = new mongoose.Schema<IUser>({
 });
 
 // Hash password before saving
-userSchema.pre('save', function (next: any) {
-  if (!this.isModified('password')) return next();
-
-  const saltRounds = 12;
-  bcrypt.genSalt(saltRounds, (err, salt) => {
-    if (err) return next(err);
-
-    bcrypt.hash(this.password!, salt!, (err, hash) => {
-      if (err) return next(err);
-
-      this.password = hash!;
-      next();
-    });
-  });
-});
+// Removed pre-save hook, hashing will be done in controller
 
 // Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {

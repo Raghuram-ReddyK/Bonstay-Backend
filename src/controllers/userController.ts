@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User, { generateUserId } from '../models/User';
+import bcrypt from 'bcryptjs';
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -44,6 +45,10 @@ export const registerUser = async (req: Request, res: Response) => {
     // Generate unique ID
     const id = generateUserId();
 
+    // Hash password
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Create new user
     const newUser = new User({
       id,
@@ -52,14 +57,14 @@ export const registerUser = async (req: Request, res: Response) => {
       country,
       phoneNo,
       email,
-      password,
+      password: hashedPassword,
       userType,
       dateOfBirth: new Date(dateOfBirth),
       gender,
       occupation,
     });
 
-    // Save user (password will be hashed by pre-save hook)
+    // Save user
     await newUser.save();
 
     // Return user data without password
