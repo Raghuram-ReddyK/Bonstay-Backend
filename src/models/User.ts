@@ -2,7 +2,7 @@ import mongoose, { Document, CallbackWithoutResultAndOptionalError } from 'mongo
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
-  id: string;
+  userId: string;
   name: string;
   address: string;
   country: string;
@@ -19,7 +19,7 @@ export interface IUser extends Document {
 }
 
 const userSchema = new mongoose.Schema<IUser>({
-  id: {
+  userId: {
     type: String,
     required: true,
     unique: true,
