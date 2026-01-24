@@ -2,17 +2,22 @@ import mongoose, { Document, CallbackWithoutResultAndOptionalError } from 'mongo
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
+  id?: string; // For backward compatibility
   userId: string;
   name: string;
-  address: string;
-  country: string;
-  phoneNo: string;
+  address?: string;
+  country?: string;
+  phoneNo?: string;
   email: string;
-  password: string;
+  password?: string; // Optional for OAuth users
   userType: 'user' | 'admin';
-  dateOfBirth: Date;
-  gender: string;
-  occupation: string;
+  dateOfBirth?: Date;
+  gender?: string;
+  occupation?: string;
+  firebaseUid?: string; 
+  authProvider: 'local' | 'firebase'; 
+  photoURL?: string;
+  lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -31,15 +36,15 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   address: {
     type: String,
-    required: true,
+    required: false,
   },
   country: {
     type: String,
-    required: true,
+    required: false,
   },
   phoneNo: {
     type: String,
-    required: true,
+    required: false,
   },
   email: {
     type: String,
@@ -50,7 +55,7 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   password: {
     type: String,
-    required: true,
+    required: false, // Optional for OAuth users
   },
   userType: {
     type: String,
@@ -59,15 +64,34 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   dateOfBirth: {
     type: Date,
-    required: true,
+    required: false,
   },
   gender: {
     type: String,
-    required: true,
+    required: false,
   },
   occupation: {
     type: String,
-    required: true,
+    required: false,
+  },
+  firebaseUid: {
+    type: String,
+    required: false,
+    unique: true,
+    sparse: true, 
+  },
+  authProvider: {
+    type: String,
+    enum: ['local', 'firebase'],
+    default: 'local',
+  },
+  photoURL: {
+    type: String,
+    required: false,
+  },
+  lastLogin: {
+    type: Date,
+    required: false,
   },
 }, {
   timestamps: true,
