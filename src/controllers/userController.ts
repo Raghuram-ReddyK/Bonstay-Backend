@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import User, { generateUserId } from '../models/User';
+import AdminCode from '../models/AdminCode';
+import AdminCodeRequest from '../models/AdminCodeRequest';
 import bcrypt from 'bcryptjs';
 import { firebaseAuth } from '../utilities/firebase';
 
@@ -17,15 +19,8 @@ export const registerUser = async (req: Request, res: Response) => {
       dateOfBirth,
       gender,
       occupation,
+      adminCode, // Required for admin registration
     } = req.body;
-
-    // Validate required fields
-    if (!name || !address || !country || !phoneNo || !email || !password || !dateOfBirth || !gender || !occupation) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields are required',
-      });
-    }
 
     // Validate userType
     if (userType !== 'user' && userType !== 'admin') {
@@ -33,6 +28,72 @@ export const registerUser = async (req: Request, res: Response) => {
         success: false,
         message: 'userType must be either "user" or "admin"',
       });
+    }
+
+    // Common required fields for all users
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, email, and password are required',
+      });
+    }
+
+    let adminCodeDoc = null;
+    let adminRequest = null;
+    let adminRequestData = null;
+
+    if (userType === 'admin') {
+      // For admin registration, adminCode is required
+      if (!adminCode) {
+        return res.status(400).json({
+          success: false,
+          message: 'adminCode is required for admin registration',
+        });
+      }
+
+      // Validate admin code
+      adminCodeDoc = await AdminCode.findOne({ code: adminCode });
+      if (!adminCodeDoc) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid admin code',
+        });
+      }
+
+      if (adminCodeDoc.isUsed) {
+        return res.status(400).json({
+          success: false,
+          message: 'Admin code has already been used',
+        });
+      }
+
+      if (adminCodeDoc.status !== 'approved') {
+        return res.status(400).json({
+          success: false,
+          message: 'Admin code is not approved',
+        });
+      }
+
+      // Get the admin request data
+      adminRequest = await AdminCodeRequest.findOne({ id: adminCodeDoc.requestId });
+      if (adminRequest) {
+        adminRequestData = {
+          department: adminRequest.department,
+          organization: adminRequest.organization,
+          position: adminRequest.position,
+        };
+      }
+
+      // For admin users, make personal fields optional if not provided
+      // Use admin request data as fallback where possible
+    } else {
+      // For regular users, require all fields
+      if (!address || !country || !phoneNo || !dateOfBirth || !gender || !occupation) {
+        return res.status(400).json({
+          success: false,
+          message: 'All fields are required for user registration',
+        });
+      }
     }
 
     // Check if user already exists
@@ -65,24 +126,53 @@ export const registerUser = async (req: Request, res: Response) => {
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Create new user
-    const newUser = new User({
+    // Prepare user data
+    const userData: any = {
       userId: finalUserId,
       name,
-      address,
-      country,
-      phoneNo,
       email,
       password: hashedPassword,
       userType,
-      dateOfBirth: new Date(dateOfBirth),
-      gender,
-      occupation,
-      authProvider: 'local', // Explicitly set for local registration
-    });
+      authProvider: 'local',
+    };
+
+    if (userType === 'admin') {
+      // For admin users, use provided data or defaults
+      userData.address = address || '';
+      userData.country = country || '';
+      userData.phoneNo = phoneNo || '';
+      userData.dateOfBirth = dateOfBirth ? new Date(dateOfBirth) : null;
+      userData.gender = gender || '';
+      userData.occupation = occupation || adminRequestData?.position || '';
+    } else {
+      // For regular users, all fields are required
+      userData.address = address;
+      userData.country = country;
+      userData.phoneNo = phoneNo;
+      userData.dateOfBirth = new Date(dateOfBirth);
+      userData.gender = gender;
+      userData.occupation = occupation;
+    }
+
+    // Create new user
+    const newUser = new User(userData);
 
     // Save user
     await newUser.save();
+
+    // If admin registration, mark the admin code as used
+    if (userType === 'admin' && adminCodeDoc) {
+      adminCodeDoc.isUsed = true;
+      await adminCodeDoc.save();
+
+      // Update the admin request with registered user ID
+      if (adminRequest) {
+        adminRequest.codeUsed = true;
+        adminRequest.codeUsedDate = new Date();
+        adminRequest.registeredUserId = finalUserId;
+        await adminRequest.save();
+      }
+    }
 
     // Return user data without password
     const userResponse = {

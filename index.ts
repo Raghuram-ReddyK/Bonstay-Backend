@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dbConnection from './src/utilities/dbConnection';
 import userRoutes from './src/routes/userRoutes';
+import adminCodeRoutes from './src/routes/adminCodeRoutes';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ dbConnection();
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/admin-codes', adminCodeRoutes);
 
 // Basic route
 app.get('/', (req: Request, res: Response) => {
