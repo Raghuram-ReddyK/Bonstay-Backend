@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import dbConnection from './src/utilities/dbConnection';
 import userRoutes from './src/routes/userRoutes';
 import adminCodeRoutes from './src/routes/adminCodeRoutes';
+import hotelRoutes from './src/routes/hotelRoutes';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ dbConnection();
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/admin-codes', adminCodeRoutes);
+app.use('/api/hotels', hotelRoutes);
 
 // Basic route
 app.get('/', (req: Request, res: Response) => {
