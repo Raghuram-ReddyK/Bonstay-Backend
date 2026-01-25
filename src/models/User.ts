@@ -14,16 +14,23 @@ export interface IUser extends Document {
   dateOfBirth?: Date;
   gender?: string;
   occupation?: string;
-  firebaseUid?: string; 
-  authProvider: 'local' | 'firebase'; 
+  firebaseUid?: string;
+  authProvider: 'local' | 'firebase';
   photoURL?: string;
   lastLogin?: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
+  id: {
+    type: String,
+    required: false,
+    index: false, // Explicitly disable indexing on id field
+  },
   userId: {
     type: String,
     required: true,
@@ -90,6 +97,14 @@ const userSchema = new mongoose.Schema<IUser>({
     required: false,
   },
   lastLogin: {
+    type: Date,
+    required: false,
+  },
+  resetPasswordToken: {
+    type: String,
+    required: false,
+  },
+  resetPasswordExpires: {
     type: Date,
     required: false,
   },

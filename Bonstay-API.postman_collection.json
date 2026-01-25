@@ -1,0 +1,766 @@
+{
+  "info": {
+    "name": "Bonstay API Collection",
+    "description": "Complete API collection for Bonstay Backend including Users, Admin Codes, and Hotels",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Registration",
+      "item": [
+        {
+          "name": "Register Regular User (Email sent automatically)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"address\": \"123 Main St\",\n  \"country\": \"USA\",\n  \"phoneNo\": \"9876543210\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"userType\": \"user\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"gender\": \"male\",\n  \"occupation\": \"Software Engineer\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register Admin User (Email sent automatically)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"adminpass123\",\n  \"userType\": \"admin\",\n  \"adminCode\": \"ADMINABC12345\",\n  \"address\": \"456 Admin St\",\n  \"country\": \"USA\",\n  \"phoneNo\": \"1234567890\",\n  \"dateOfBirth\": \"1985-05-15\",\n  \"gender\": \"male\",\n  \"occupation\": \"IT Manager\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "register"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Authentication",
+      "item": [
+        {
+          "name": "User Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Forgot Password (Email sent automatically)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"john.doe@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "forgot-password"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hotels",
+      "item": [
+        {
+          "name": "Get All Hotels",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/hotels?page=1&limit=10&sortBy=rating&sortOrder=desc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "hotels"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "rating"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Hotels",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/hotels/search?q=beach&city=Mumbai&guests=2&rooms=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "hotels",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "beach"
+                },
+                {
+                  "key": "city",
+                  "value": "Mumbai"
+                },
+                {
+                  "key": "guests",
+                  "value": "2"
+                },
+                {
+                  "key": "rooms",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Hotel by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/hotels/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "hotels",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "IND-BONSTAY-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Hotel (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelName\": \"Test Hotel\",\n  \"city\": \"Delhi\",\n  \"state\": \"Delhi\",\n  \"country\": \"India\",\n  \"category\": \"4-Star Hotel\",\n  \"rating\": 4.2,\n  \"description\": \"A beautiful hotel in the heart of Delhi\",\n  \"amenities\": [\n    \"Free WiFi\",\n    \"Swimming Pool\",\n    \"Fitness Center\"\n  ],\n  \"phoneNo\": \"91-11-12345678\",\n  \"email\": \"info@testhotel.com\",\n  \"website\": \"www.testhotel.com\",\n  \"address\": \"123 Test Road, Delhi 110001\",\n  \"coordinates\": {\n    \"latitude\": 28.6139,\n    \"longitude\": 77.2090\n  },\n  \"checkInTime\": \"14:00\",\n  \"checkOutTime\": \"12:00\",\n  \"imageUrl\": \"test-hotel-main.jpg\",\n  \"gallery\": [\n    \"test-hotel-1.jpg\",\n    \"test-hotel-2.jpg\"\n  ],\n  \"roomTypes\": [\n    {\n      \"id\": \"th_standard\",\n      \"name\": \"Standard Room\",\n      \"description\": \"Comfortable standard room\",\n      \"capacity\": 2,\n      \"size\": \"250 sq ft\",\n      \"bedType\": \"Queen Bed\",\n      \"pricePerNight\": 3500,\n      \"originalPrice\": 4000,\n      \"discount\": 12,\n      \"amenities\": [\n        \"AC\",\n        \"Free WiFi\",\n        \"TV\"\n      ],\n      \"images\": [\n        \"standard-1.jpg\"\n      ],\n      \"available\": true,\n      \"totalRooms\": 20,\n      \"availableRooms\": 15\n    }\n  ],\n  \"policies\": {\n    \"cancellation\": \"Free cancellation up to 24 hours\",\n    \"childPolicy\": \"Children under 12 stay free\",\n    \"petPolicy\": \"Pets not allowed\",\n    \"smokingPolicy\": \"Non-smoking property\"\n  },\n  \"nearbyAttractions\": [\n    {\n      \"name\": \"Red Fort\",\n      \"distance\": \"5 km\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/hotels",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "hotels"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Hotel (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4.5,\n  \"description\": \"Updated hotel description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/hotels/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "hotels",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "IND-BONSTAY-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Hotel (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/hotels/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "hotels",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "IND-BONSTAY-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Hotel Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\",\n  \"userName\": \"John Doe\",\n  \"userEmail\": \"john@example.com\",\n  \"rating\": 5,\n  \"comment\": \"Excellent hotel with great service!\",\n  \"roomType\": \"Standard Room\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/hotels/:id/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "hotels",
+                ":id",
+                "reviews"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "IND-BONSTAY-0001"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Code Requests",
+      "item": [
+        {
+          "name": "Create Admin Code Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phoneNo\": \"9876543210\",\n  \"department\": \"IT\",\n  \"reason\": \"Need admin access to manage hotel bookings and user accounts\",\n  \"organization\": \"TechCorp Inc.\",\n  \"position\": \"IT Manager\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin-codes/requests",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin-codes",
+                "requests"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Admin Code Requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin-codes/requests?status=pending&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin-codes",
+                "requests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Admin Code Request by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin-codes/requests/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin-codes",
+                "requests",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "req001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Approve Admin Code Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approvedBy\": \"admin01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin-codes/requests/:id/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin-codes",
+                "requests",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "req001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reject Admin Code Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rejectedBy\": \"admin01\",\n  \"rejectionReason\": \"Insufficient information provided\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin-codes/requests/:id/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin-codes",
+                "requests",
+                ":id",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "req002"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Codes",
+      "item": [
+        {
+          "name": "Admin Code Requests",
+          "item": [
+            {
+              "name": "Create Admin Code Request",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"John Smith\",\n  \"email\": \"john.smith@company.com\",\n  \"phoneNo\": \"9876543210\",\n  \"department\": \"IT\",\n  \"reason\": \"Need admin access for hotel management\",\n  \"organization\": \"Tech Solutions Inc\",\n  \"position\": \"IT Manager\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes/requests",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes",
+                    "requests"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get All Admin Code Requests",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes/requests?status=pending&page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes",
+                    "requests"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "pending"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Admin Code Request by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes/requests/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes",
+                    "requests",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1704067200000"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Approve Admin Code Request (Sends Email)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"approvedBy\": \"System Admin\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes/requests/:id/approve",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes",
+                    "requests",
+                    ":id",
+                    "approve"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1704067200000"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Reject Admin Code Request",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rejectedBy\": \"System Admin\",\n  \"rejectionReason\": \"Insufficient authorization\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes/requests/:id/reject",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes",
+                    "requests",
+                    ":id",
+                    "reject"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1704067200000"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin Code Management",
+          "item": [
+            {
+              "name": "Get All Admin Codes",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes?status=approved&isUsed=false&page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "approved"
+                    },
+                    {
+                      "key": "isUsed",
+                      "value": "false"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Use Admin Code",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"code\": \"ADMINABC12345\",\n  \"registeredUserId\": \"BONSTAY-2024123456789\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes/use",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes",
+                    "use"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Validate Admin Code",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin-codes/validate/:code",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin-codes",
+                    "validate",
+                    ":code"
+                  ],
+                  "variable": [
+                    {
+                      "key": "code",
+                      "value": "ADMINABC12345"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ]
+}

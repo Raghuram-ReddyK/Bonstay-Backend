@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import AdminCodeRequest from '../models/AdminCodeRequest';
 import AdminCode from '../models/AdminCode';
+import { sendEmail, generateAdminCodeApprovalEmailTemplate } from '../utilities/emailService';
 
 // Generate unique ID for requests
 const generateRequestId = (): string => {
@@ -201,6 +202,33 @@ export const approveAdminCodeRequest = async (req: Request, res: Response) => {
       requestId: id,
     });
     await newAdminCode.save();
+
+    // Send approval email with admin code
+    try {
+      const emailTemplate = generateAdminCodeApprovalEmailTemplate({
+        requestId: request.id,
+        name: request.name,
+        email: request.email,
+        adminCode: adminCode,
+        department: request.department,
+        organization: request.organization,
+        position: request.position,
+      });
+
+      // Send email asynchronously (don't wait for it to complete)
+      sendEmail({
+        to: request.email,
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+      }).catch(emailError => {
+        console.error('Failed to send admin code approval email:', emailError);
+        // Don't fail the approval if email fails
+      });
+    } catch (emailError) {
+      console.error('Error preparing admin code approval email:', emailError);
+      // Continue with approval even if email preparation fails
+    }
 
     res.json({
       success: true,

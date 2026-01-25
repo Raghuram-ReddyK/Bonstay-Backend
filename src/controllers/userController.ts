@@ -4,6 +4,7 @@ import AdminCode from '../models/AdminCode';
 import AdminCodeRequest from '../models/AdminCodeRequest';
 import bcrypt from 'bcryptjs';
 import { firebaseAuth } from '../utilities/firebase';
+import { sendEmail, generateWelcomeEmailTemplate, generatePasswordResetEmailTemplate } from '../utilities/emailService';
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -189,6 +190,30 @@ export const registerUser = async (req: Request, res: Response) => {
       authProvider: newUser.authProvider,
       createdAt: newUser.createdAt,
     };
+
+    // Send welcome email asynchronously (don't wait for it to complete)
+    try {
+      const emailTemplate = generateWelcomeEmailTemplate({
+        userId: newUser.userId,
+        name: newUser.name,
+        email: newUser.email,
+        userType: newUser.userType,
+      });
+
+      // Send email in background
+      sendEmail({
+        to: newUser.email,
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+      }).catch(emailError => {
+        console.error('Failed to send welcome email:', emailError);
+        // Don't fail registration if email fails
+      });
+    } catch (emailError) {
+      console.error('Error preparing welcome email:', emailError);
+      // Continue with registration even if email preparation fails
+    }
 
     res.status(201).json({
       success: true,
@@ -418,6 +443,86 @@ export const getUserById = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('Get user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+// Forgot password
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { identifier } = req.body; // Can be email or userId
+
+    // Validate required field
+    if (!identifier) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email or User ID is required',
+      });
+    }
+
+    // Find user by email or userId
+    const user = await User.findOne({
+      $or: [
+        { email: identifier },
+        { userId: identifier }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with the provided email or user ID',
+      });
+    }
+
+    // Generate reset token (simple approach - in production, use JWT or more secure method)
+    const resetToken = require('crypto').randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiry
+
+    // Save reset token to user (you might want to create a separate collection for this)
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = resetTokenExpiry;
+    await user.save();
+
+    // Send password reset email
+    try {
+      const emailTemplate = generatePasswordResetEmailTemplate({
+        userId: user.userId,
+        name: user.name,
+        email: user.email,
+        resetToken: resetToken,
+      });
+
+      // Send email asynchronously (don't wait for it to complete)
+      sendEmail({
+        to: user.email,
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+      }).catch(emailError => {
+        console.error('Failed to send password reset email:', emailError);
+        // Don't fail the request if email fails
+      });
+
+      res.json({
+        success: true,
+        message: 'Password reset email sent successfully. Please check your email.',
+      });
+
+    } catch (emailError) {
+      console.error('Error preparing password reset email:', emailError);
+      // Still return success to avoid revealing if email exists
+      res.json({
+        success: true,
+        message: 'If an account with that email exists, a password reset link has been sent.',
+      });
+    }
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',

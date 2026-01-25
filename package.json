@@ -6,6 +6,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec ts-node index.ts",
+    "setup-email": "ts-node src/utilities/setupEmail.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,6 +21,7 @@
     "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.2",
+    "nodemailer": "^7.0.12",
     "nodemon": "^3.1.11"
   },
   "devDependencies": {
@@ -29,6 +31,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^25.0.6",
+    "@types/nodemailer": "^7.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
