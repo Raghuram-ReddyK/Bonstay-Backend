@@ -120,6 +120,96 @@
               ]
             }
           }
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"address\": \"Updated Address\",\n  \"country\": \"Updated Country\",\n  \"phoneNo\": \"9876543210\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"gender\": \"male\",\n  \"occupation\": \"Updated Occupation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/:userId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "BONSTAY-2024123456789"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/:userId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "BONSTAY-2024123456789"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Information",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"address\": \"Updated Address\",\n  \"phoneNo\": \"9876543210\",\n  \"occupation\": \"Updated Occupation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/:userId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "BONSTAY-2024123456789"
+                }
+              ]
+            }
+          }
         }
       ]
     },

@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, getUserById, oauthLogin, forgotPassword } from '../controllers/userController';
+import { registerUser, loginUser, getUserById, oauthLogin, forgotPassword, updateUser } from '../controllers/userController';
 
 const router = express.Router();
 
@@ -14,6 +14,9 @@ router.post('/oauth-login', oauthLogin);
 
 // POST /api/users/forgot-password
 router.post('/forgot-password', forgotPassword);
+
+// PUT /api/users/:userId
+router.put('/:userId', updateUser);
 
 // GET /api/users/:userId
 router.get('/:userId', getUserById);

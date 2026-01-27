@@ -529,3 +529,182 @@ export const forgotPassword = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Update user profile
+export const updateUserProfile = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const updateData = req.body;
+
+    // Find user by userId
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Fields that can be updated
+    const allowedFields = [
+      'name',
+      'address',
+      'country',
+      'phoneNo',
+      'dateOfBirth',
+      'gender',
+      'occupation',
+      'photoURL'
+    ];
+
+    // Filter update data to only allowed fields
+    const filteredUpdateData: any = {};
+    Object.keys(updateData).forEach(key => {
+      if (allowedFields.includes(key)) {
+        if (key === 'dateOfBirth' && updateData[key]) {
+          filteredUpdateData[key] = new Date(updateData[key]);
+        } else {
+          filteredUpdateData[key] = updateData[key];
+        }
+      }
+    });
+
+    // Check if there's anything to update
+    if (Object.keys(filteredUpdateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No valid fields to update',
+      });
+    }
+
+    // Update user
+    const updatedUser = await User.findOneAndUpdate(
+      { userId },
+      { $set: filteredUpdateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Return updated user data without sensitive information
+    const userResponse = {
+      userId: updatedUser.userId,
+      name: updatedUser.name,
+      address: updatedUser.address,
+      country: updatedUser.country,
+      phoneNo: updatedUser.phoneNo,
+      email: updatedUser.email,
+      userType: updatedUser.userType,
+      dateOfBirth: updatedUser.dateOfBirth,
+      gender: updatedUser.gender,
+      occupation: updatedUser.occupation,
+      photoURL: updatedUser.photoURL,
+      authProvider: updatedUser.authProvider,
+      updatedAt: updatedUser.updatedAt,
+    };
+
+    res.json({
+      success: true,
+      message: 'User profile updated successfully',
+      data: userResponse,
+    });
+
+  } catch (error) {
+    console.error('Update user profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+// Update user information
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const updateData = req.body;
+
+    // Find the user
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Define allowed fields for update (exclude sensitive fields)
+    const allowedFields = [
+      'name',
+      'address',
+      'country',
+      'phoneNo',
+      'dateOfBirth',
+      'gender',
+      'occupation',
+      'photoURL'
+    ];
+
+    // Filter update data to only include allowed fields
+    const filteredUpdateData: any = {};
+    Object.keys(updateData).forEach(key => {
+      if (allowedFields.includes(key)) {
+        if (key === 'dateOfBirth' && updateData[key]) {
+          // Convert dateOfBirth to Date object
+          filteredUpdateData[key] = new Date(updateData[key]);
+        } else {
+          filteredUpdateData[key] = updateData[key];
+        }
+      }
+    });
+
+    // Check if there's anything to update
+    if (Object.keys(filteredUpdateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No valid fields provided for update',
+      });
+    }
+
+    // Update user
+    Object.assign(user, filteredUpdateData);
+    await user.save();
+
+    // Return updated user data (exclude password and sensitive fields)
+    const userResponse = {
+      userId: user.userId,
+      name: user.name,
+      address: user.address,
+      country: user.country,
+      phoneNo: user.phoneNo,
+      email: user.email,
+      userType: user.userType,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
+      occupation: user.occupation,
+      authProvider: user.authProvider,
+      photoURL: user.photoURL,
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    res.json({
+      success: true,
+      message: 'User information updated successfully',
+      data: userResponse,
+    });
+
+  } catch (error) {
+    console.error('Update user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
